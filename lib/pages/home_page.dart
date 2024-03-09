@@ -10,18 +10,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final WeatherFactory _wf = WeatherFactory(weather_app_apiKey);
-
+  String _location = 'india';
   Weather? _weather;
+  
   @override
   void initState() {
-    super.initState();
-    _wf.currentWeatherByCityName('London').then((w) {
+      super.initState();
+    _fetchWeather();
+
+  }
+  void _fetchWeather() {
+    _wf.currentWeatherByCityName(_location).then((w) {
       setState(() {
         _weather = w;
       });
     });
   }
+   // Function to update location and fetch weather data
+  void _updateLocation(String newLocation) {
+    setState(() {
+      _location = newLocation;
+    });
+    _fetchWeather();
+  }
 
+  
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildUI(),
@@ -41,6 +54,25 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+
+             TextField(
+            onChanged: (value) {
+              _updateLocation(value);
+            },
+            decoration: InputDecoration(
+              labelText: 'Enter Location',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            ),
+            style: TextStyle(fontSize: 16.0),
+          ),
+           SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.05,
+          ),
           _locationHeader(),
           SizedBox(
             height: MediaQuery.sizeOf(context).height * 0.05,
@@ -51,13 +83,17 @@ class _HomePageState extends State<HomePage> {
           ),
           _weatherIcon(),
           SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.05,
+            height: MediaQuery.sizeOf(context).height * 0.02,
           ),
           _currentTemp(),
           SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.05,
+            height: MediaQuery.sizeOf(context).height * 0.02,
           ),
           _extraInfo(),
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.02,
+          ),
+       
         ],
       ),
     );
@@ -194,6 +230,7 @@ child: Column(
                   fontSize: 15,
                 ),
               ),
+              
             ],
           )
 
